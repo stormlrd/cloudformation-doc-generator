@@ -56,20 +56,30 @@ Type: {{ parameters[parameter].Type }} {% if parameters[parameter].Default %}
 Default: {{ parameters[parameter].Default}}{% endif %} {% if parameters[parameter].Description %}
 Description: {{ parameters[parameter].Description}}{% endif %} {% endfor %}
 
-## Resources
-The list of resources this template creates:
+## Resource List
+The following resources form part of this template:
 {% for resource in resources %}
-### {{ resource }} 
-Type: {{ resources[resource].Type }} {% if resources[resource].Description %}
-Description: {{ resources[resource].Description}}{% endif %} {% endfor %}
+- {{ resource }} {% endfor %}
+
+## Resource Definitions
+The following sections breaks down each resource and their properties.
+{% for resource in resources %}
+### {{ resource }} Resource
+#### Resource Type
+{{ resources[resource].Type }}{% if resources[resource].Description %}
+#### Description
+{{ resources[resource].Description}}{% endif %} 
+#### Properties:
+| Property Name | Value |
+| -------------- | ----- |{% for property in resources[resource].Properties %}
+| {{ property }} | {{ resources[resource].Properties[property] }} |{% endfor %}
+{% endfor %}
 
 ## Outputs
 The list of outputs this template exposes:
-{% for output in outputs %}
-### {{ output }} 
-{% if outputs[output].Description %}Description: {{ outputs[output].Description}}{% endif %}{% if outputs[output].Export.Name %} 
-Export name: {{ outputs[output].Export.Name }}{% endif %}  
-{% endfor %}
+| Output Name | Description | Export name |
+| ------------| ----------- | ----------- |{% for output in outputs %}
+|{{ output }}|{% if outputs[output].Description %}{{ outputs[output].Description}}{% endif %}|{% if outputs[output].Export.Name %}{{ outputs[output].Export.Name }}|{% endif %}{% endfor %}
 """
 @click.command()
 @click.argument('f', type=click.File())
@@ -85,8 +95,9 @@ def generate(f):
     description = get_description(template)
     parameters = get_parameters(template)
     resources = get_resources(template)
+    #print(resources['VPC']['Properties']['EnableDnsSupport'])
     outputs = get_outputs(template)
-
+    
     click.echo(Template(TEMPLATE).render(
         name=f.name.replace(".{}".format(extension), ''),
         description=description,
