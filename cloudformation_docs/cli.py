@@ -44,42 +44,64 @@ def get_description(template):
         description = "No Template description set"
     return description
 
-TEMPLATE = """# {{ name }}
+TEMPLATE = """CloudFormation Template: {{ name }}
+
+# {{ name }}
+
 # Description
 {{ description }}
 
-## Parameters
+# Parameters
+
 The list of parameters for this template:
+
+| Parameter Name | Type |
+| -------------- | ----- |
+{% for parameter in parameters %}| {{ parameter }} | {{ parameters[parameter].Type }} |
+{% else %}No Parameters defined in template{% endfor %}
+
+## Parameter Breakdown
+The following sections outlines the parameter definitions for this template:
 {% for parameter in parameters %}
+
 ### {{ parameter }} 
 Type: {{ parameters[parameter].Type }} {% if parameters[parameter].Default %}
 Default: {{ parameters[parameter].Default}}{% endif %} {% if parameters[parameter].Description %}
-Description: {{ parameters[parameter].Description}}{% endif %} {% endfor %}
+Description: {{ parameters[parameter].Description}}{% endif %} {% else %}No Parameters defined in template{% endfor %}
 
-## Resource List
+# Resources
 The following resources form part of this template:
-{% for resource in resources %}
-- {{ resource }} {% endfor %}
+
+| Resource Name | Type |
+| -------------- | ----- |
+{% for resource in resources %}| {{ resource }} | {{ resources[resource].Type }} | 
+{% else %}No Resources defined in template{% endfor %}
 
 ## Resource Definitions
-The following sections breaks down each resource and their properties.
+The following sections breaks down each resource and their properties:
+
 {% for resource in resources %}
 ### {{ resource }} Resource
+
 #### Resource Type
 {{ resources[resource].Type }}{% if resources[resource].Description %}
+
 #### Description
-{{ resources[resource].Description}}{% endif %} 
+{{ resources[resource].Description}}{% endif %}
+
 #### Properties:
 | Property Name | Value |
-| -------------- | ----- |{% for property in resources[resource].Properties %}
-| {{ property }} | {{ resources[resource].Properties[property] }} |{% endfor %}
-{% endfor %}
+| -------------- | ----- |
+{% for property in resources[resource].Properties %}| {{ property }} | {{ resources[resource].Properties[property] }} |{% else %}No Properties defined{% endfor %}
+{% else %}No Resources defined in template{% endfor %}
 
-## Outputs
-The list of outputs this template exposes:
-| Output Name | Description | Export name |
-| ------------| ----------- | ----------- |{% for output in outputs %}
-|{{ output }}|{% if outputs[output].Description %}{{ outputs[output].Description}}{% endif %}|{% if outputs[output].Export.Name %}{{ outputs[output].Export.Name }}|{% endif %}{% endfor %}
+# Outputs
+The list of outputs this template exposes are:
+
+| Output Name | Description | Export name | Value |
+| ------------ | ----------- | ----------- | ----- |
+{% for output in outputs %}| {{ output }} | {% if outputs[output].Description %}{{ outputs[output].Description}}{% endif %} | {% if outputs[output].Export %}{% if outputs[output].Export.Name %}{{ outputs[output].Export.Name }} {% else %} Not Defined {% endif %}{% endif %} | {{ outputs[output].Value }}
+{% else %}No Outputs defined in template{% endfor %}
 """
 @click.command()
 @click.argument('f', type=click.File())
