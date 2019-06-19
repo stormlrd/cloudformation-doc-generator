@@ -95,11 +95,9 @@ def generate(f):
     description = get_description(template)
     parameters = get_parameters(template)
     resources = get_resources(template)
-    #print(resources['VPC']['Properties']['EnableDnsSupport'])
     outputs = get_outputs(template)
-    
     click.echo(Template(TEMPLATE).render(
-        name=f.name.replace(".{}".format(extension), ''),
+        name = f.name.split('\\')[-1:][0],
         description=description,
         parameters=parameters,
         resources=resources,
