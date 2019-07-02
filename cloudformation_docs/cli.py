@@ -114,11 +114,12 @@ def generate(f):
     extension = f.name.split(".").pop()
     if extension in ["yaml", "yml"]:
         j = to_json(f)
+        template = json.loads(j)
     elif extension in ["json"]:
         j = f
+        template = json.load(j)
     else:
         raise Exception("{}: not a valid file extension".format(extension))
-    template = json.loads(j)
     description = get_description(template)
     parameters = get_parameters(template)
     resources = get_resources(template)
