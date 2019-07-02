@@ -17,6 +17,13 @@ def get_parameters(template):
         params = []
     return params
 
+def get_conditions(template):
+    conditions = template.get('Conditions')
+    if not conditions:
+        conditions = template.get('conditions')
+    if not conditions:
+        conditions = []
+    return conditions
 
 def get_resources(template):
     resources = template.get('Resources')
@@ -73,6 +80,15 @@ Type: {{ parameters[parameter].Type }}
 
 {% endfor %}
 
+# Conditions
+The following conditions form part of this template:
+
+| Condition Name |
+| -------------- |
+{% for condition in conditions %}| {{ condition }} |
+{% else %}No Conditions defined in template{% endfor %}
+
+
 # Resources
 The following resources form part of this template:
 
@@ -88,10 +104,16 @@ The following sections breaks down each resource and their properties:
 ### {{ resource }} Resource
 
 #### Resource Type
-{{ resources[resource].Type }}{% if resources[resource].Description %}
+{{ resources[resource].Type }}
 
 #### Description
-{{ resources[resource].Description}}{% endif %}
+{% if resources[resource].Description %}{{ resources[resource].Description}}{% endif %}
+
+#### DependsOn
+{% if resources[resource].DependsOn %}{{ resources[resource].DependsOn}}{% endif %}
+
+#### Condition
+{% if resources[resource].Condition %}{{ resources[resource].Condition}}{% endif %}
 
 #### Properties:
 | Property Name | Value |
@@ -122,12 +144,14 @@ def generate(f):
         raise Exception("{}: not a valid file extension".format(extension))
     description = get_description(template)
     parameters = get_parameters(template)
+    conditions = get_conditions(template)
     resources = get_resources(template)
     outputs = get_outputs(template)
     click.echo(Template(TEMPLATE).render(
         name = f.name.split('\\')[-1:][0],
         description=description,
         parameters=parameters,
+        conditions=conditions,
         resources=resources,
         outputs=outputs,
     ))
