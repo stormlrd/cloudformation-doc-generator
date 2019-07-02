@@ -65,12 +65,13 @@ The following sections outlines the parameter definitions for this template:
 {% for parameter in parameters %}
 
 ### {{ parameter }} 
-Description: {{ parameters[parameter].Description}}{% endif %} {% else %}No Parameters defined in template{% endfor %}
+{% if parameters[parameter].Description %}Description: {{ parameters[parameter].Description}}{% endif %} 
 
-Type: {{ parameters[parameter].Type }} {% if parameters[parameter].Default %}
+Type: {{ parameters[parameter].Type }} 
 
-Default: {{ parameters[parameter].Default}}{% endif %} {% if parameters[parameter].Description %}
+{% if parameters[parameter].Default %}Default: {{ parameters[parameter].Default}}{% endif %} 
 
+{% endfor %}
 
 # Resources
 The following resources form part of this template:
