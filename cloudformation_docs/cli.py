@@ -66,8 +66,11 @@ The following sections outlines the parameter definitions for this template:
 
 ### {{ parameter }} 
 Type: {{ parameters[parameter].Type }} {% if parameters[parameter].Default %}
+
 Default: {{ parameters[parameter].Default}}{% endif %} {% if parameters[parameter].Description %}
+
 Description: {{ parameters[parameter].Description}}{% endif %} {% else %}No Parameters defined in template{% endfor %}
+
 
 # Resources
 The following resources form part of this template:
@@ -92,7 +95,8 @@ The following sections breaks down each resource and their properties:
 #### Properties:
 | Property Name | Value |
 | -------------- | ----- |
-{% for property in resources[resource].Properties %}| {{ property }} | {{ resources[resource].Properties[property] }} |{% else %}No Properties defined{% endfor %}
+{% for property in resources[resource].Properties %}| {{ property }} | {{ resources[resource].Properties[property] }} |
+{% else %}No Properties defined{% endfor %}
 {% else %}No Resources defined in template{% endfor %}
 
 # Outputs
